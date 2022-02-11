@@ -59,7 +59,7 @@ class TicTacToe:
         if player == "X":
             self.take_manual_turn("X")
         if player == "O":
-            self.take_random_turn("O")
+            self.take_minimax_turn("O")
 
     #Chooses a random spot on the TicTacToe board
     def take_random_turn(self, player):
@@ -138,7 +138,54 @@ class TicTacToe:
             
         return True
                         
-        
+
+    def minimax(self, player):
+        opt_row = -1
+        opt_col = -1
+        #Base Case
+        if self.check_win(player) == True or self.check_tie() == True:
+            if player == "O":
+                return (10, None, None)
+            if player == "X":
+                return (-10, None, None)
+            if self.check_tie(player) == True:
+                return (0, None, None)
+
+        #Recursive Case
+        if player == "O":
+            best = -10
+            for i in range(3):
+                for a in range(3):
+                    if self.is_valid_move(a,i) == True:
+                        self.place_player("O", a, i)
+                        score = self.minimax("X")[0]
+                        self.place_player("-", a, i)
+                        if best < score:
+                            best = score
+                            self.place_player("-", a, i)
+                            opt_row = a
+                            opt_col = i
+            return (best, opt_row, opt_col)
+
+        if player == "X":
+            worst = 10
+            for i in range(3):
+                for a in range(3):
+                    if self.is_valid_move(a,i) == True:
+                        self.place_player("X", a, i)
+                        score,r,c = self.minimax("O")
+                        self.place_player("-", a, i)
+                        if worst > score:
+                            worst = score
+                            self.place_player("-", a, i)
+                            opt_row = a
+                            opt_col = i
+            return (worst, opt_row, opt_col)
+
+
+    def take_minimax_turn(self, player):
+        score, row, col = self.minimax(player)
+        self.place_player(player, row, col)
                          
             
             
