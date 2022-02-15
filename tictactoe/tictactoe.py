@@ -138,7 +138,7 @@ class TicTacToe:
             
         return True
                         
-
+    #Minimax function uses recursion to find best move to always win or tie
     def minimax(self, player):
         opt_row = -1
         opt_col = -1
