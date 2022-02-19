@@ -1,5 +1,5 @@
 import random
-
+import time
 
 class TicTacToe:
     def __init__(self):
@@ -37,7 +37,6 @@ class TicTacToe:
 
     def place_player(self, player, row, col):
         # TODO: Place the player on the board
-
         self.board[row][col] = player
 
 
@@ -57,6 +56,8 @@ class TicTacToe:
     def take_turn(self, player):
         # TODO: Simply call the take_manual_turn function
         depth = 2
+        alpha = -100
+        beta = 100
         if player == "X":
             self.take_manual_turn("X")
         if player == "O":
@@ -144,19 +145,19 @@ class TicTacToe:
         opt_row = -1
         opt_col = -1
         #Base Case
-        if self.check_win(player) == True or self.check_tie() == True:
-            if player == "O":
-                return (10, None, None)
-            if player == "X":
-                return (-10, None, None)
-            if self.check_tie(player) == True:
-                return (0, None, None)
-            if depth == 0:
-                return (0,None,None)
+        # if self.check_win(player) == True or self.check_tie() == True:
+        if self.check_win("O") == True:
+            return (10, None, None)
+        if self.check_win("X") == True:
+            return (-10, None, None)
+        if self.check_tie() == True:
+            return (0, None, None)
+        if depth == 0:
+            return (0,None,None)
 
         #Recursive Case
         if player == "O":
-            best = -10
+            best = -100
             for i in range(3):
                 for a in range(3):
                     if self.is_valid_move(a,i) == True:
@@ -165,13 +166,13 @@ class TicTacToe:
                         self.place_player("-", a, i)
                         if best < score:
                             best = score
-                            self.place_player("-", a, i)
+                            # self.place_player("-", a, i)
                             opt_row = a
                             opt_col = i
             return (best, opt_row, opt_col)
 
         if player == "X":
-            worst = 10
+            worst = 100
             for i in range(3):
                 for a in range(3):
                     if self.is_valid_move(a,i) == True:
@@ -187,12 +188,71 @@ class TicTacToe:
 
 
     def take_minimax_turn(self, player, depth):
-
+        start = time.time()
         score, row, col = self.minimax(player, depth)
+        end = time.time()
         self.place_player(player, row, col)
-                         
-            
-            
+        print("This turn took:", end - start, "seconds")
+
+    # def take_minimax_alpha_beta_turn(self, player, depth, alpha, beta):
+    #         start = time.time()
+    #         score, row, col = self.minimax_alpha_beta(player, depth, alpha, beta)
+    #         end = time.time()
+    #         self.place_player(player, row, col)
+    #         print("This turn took:", end - start, "seconds")
+    #
+    # def  minimax_alpha_beta(self, player, depth, alpha, beta):
+    #     opt_row = -1
+    #     opt_col = -1
+    #     # Base Case
+    #     #if self.check_win(player) == True or self.check_tie() == True:
+    #     if self.check_win("O") == True:
+    #         return (10, None, None)
+    #     if self.check_win("X") == True:
+    #         return (-10, None, None)
+    #     if self.check_tie() == True:
+    #         return (0, None, None)
+    #     if depth == 0:
+    #         return (0, None, None)
+    #
+    #     # Recursive Case
+    #     if player == "O":
+    #         best = -100
+    #         for i in range(3):
+    #             for a in range(3):
+    #                 if self.is_valid_move(a,i) == True:
+    #                     self.place_player("O", a, i)
+    #                     score = self.minimax_alpha_beta("X", depth - 1, alpha, beta)[0]
+    #                     alpha = max(alpha,score)
+    #
+    #                     self.place_player("-", a, i)
+    #                     if best < score:
+    #                         best = score
+    #                         opt_row = a
+    #                         opt_col = i
+    #                     if alpha >= beta:
+    #                         return (best, opt_row, opt_col)
+    #
+    #         return (best, opt_row, opt_col)
+    #
+    #     if player == "X":
+    #         worst = 100
+    #         for i in range(3):
+    #             for a in range(3):
+    #                 if self.is_valid_move(a,i) == True:
+    #                     self.place_player("X", a, i)
+    #                     score, r, c = self.minimax_alpha_beta("O", depth - 1,alpha,beta)
+    #                     beta = min(beta,score)
+    #
+    #                     self.place_player("-", a, i)
+    #                     if worst > score:
+    #                         worst = score
+    #                         opt_row = a
+    #                         opt_col = i
+    #                     if beta <= alpha:
+    #                         return(worst, opt_row, opt_col)
+    #
+    #         return (worst, opt_row, opt_col)
     
 
     def play_game(self):
